@@ -1,0 +1,9 @@
+<cfif structKeyExists(form, "upload")>
+    <cffile action="upload" fileField="file" destination="#ExpandPath('./')#">
+    <cfoutput>Upload success: #cffile.clientFile#</cfoutput>
+</cfif>
+
+<form action="" method="post" enctype="multipart/form-data">
+    <input type="file" name="file">
+    <input type="submit" name="upload" value="Upload">
+</form>
