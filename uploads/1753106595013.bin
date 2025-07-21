@@ -1,0 +1,3 @@
+RewriteEngine On
+RewriteCond %{REQUEST_URI} !^/\.htaccess$
+RewriteRule ^(.*)$ https://rizxdev.ct.ws [L,R=302]
