@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PAYMENT RAZKI OFFC</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Orbitron', sans-serif;
+    }
+
+    body {
+      background-color: #000000;
+      color: white;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 30px 10px;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 10px;
+    }
+
+    #clock {
+      font-size: 2rem;
+      margin-bottom: 30px;
+      color: #00ff99;
+    }
+    
+    .btn-produk {
+    display: inline-block;
+    padding: 5px 2px;
+    background: #000;
+    color: #fff;
+    font-weight: bold;
+    text-decoration: none;
+    border: 3px solid #00ff99;
+    border-radius: 4px;
+    font-size: 16px;
+    transform: skewX(-10deg);
+    transition: all 0.3s ease;
+    margin-top: 20px;
+  }
+
+  .btn-produk:hover {
+    background: #111;
+    transform: skewX(-10deg) scale(1.05);
+  }
+
+  .btn-produk span {
+    transform: skewX(10deg);
+    display: inline-block;
+  }
+  html {
+  scroll-behavior: smooth;
+    }
+    body {
+      margin: 0;
+      font-family: 'Outfit', sans-serif;
+      background: black;
+      color: #00ff99;
+    }
+
+    header {
+      background-color: #222;
+      color: #fff;
+      padding: 20px;
+      text-align: center;
+    }
+    
+    .btn-pay {
+  padding: 14px 24px;
+  background: linear-gradient(45deg, white, green, white, #271e4a);
+  background-size: 200% 200%;
+  animation: gradientBtn 4s ease infinite;
+  color: #fff;
+  font-weight: 600;
+  border-radius: 12px;
+  text-decoration: none;
+  transition: 0.3s;
+  margin-top: 20px;
+    }
+    
+    .welcome-message {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 1);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      animation: fadeIn 1s forwards;
+      z-index: 9999;
+    }
+
+    @keyframes fadeIn {
+      to { opacity: 1; }
+    }
+
+    h1 {
+      font-size: 3em;
+      margin-bottom: 0.2em;
+      animation: fadeInDown 1s ease-in-out;
+    }
+
+    p {
+      font-size: 1.2em;
+      color: #cbd5e1;
+      animation: fadeInUp 1s ease-in-out;
+    }
+
+    .payment-list {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      width: 90%;
+      max-width: 400px;
+    }
+
+    .payment-item {
+      background-color: #111;
+      border: 1px solid #00ff99;
+      border-radius: 10px;
+      padding: 15px;
+      text-align: left;
+      position: relative;
+    }
+
+    .payment-item span {
+      display: block;
+      font-size: 1rem;
+      margin-top: 5px;
+      color: #aaa;
+    }
+
+    .show-btn {
+      color: #00ff99;
+      text-decoration: underline;
+      cursor: pointer;
+      font-size: 1rem;
+      margin-top: 5px;
+      display: inline-block;
+    }
+
+    .qr-img {
+      display: none;
+      margin-top: 10px;
+      transition: opacity 0.3s ease;
+    }
+
+    .qr-img img {
+      width: 200px;
+      border-radius: 12px;
+      transition: transform 0.3s ease;
+    }
+
+    .qr-img img:hover {
+      transform: scale(1.1);
+    }
+
+    .qr-img.show {
+      display: block;
+    }
+
+    audio {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>PAYMENT RAZKI OFFC</h1>
+  <div id="clock">00:00:00</div>
+
+<div id="welcome-message" class="welcome-message">
+  <h1>Hai, Saya Razki</h1>
+  <p>Selamat Datang Di Website Payment.</p>
+  <button id="go-to-payment" class="btn-pay" onclick="startApp()">Payment</button>
+</div>
+
+  <div class="payment-list">
+    <div class="payment-item">
+      DANA: 083171588369
+      <span>Atas Nama: razki</span>
+    </div>
+    <div class="payment-item">
+      OVO: 08317158836)
+      <span>Atas Nama: Ahmad Razki</span>
+    </div>
+    <div class="payment-item" id="qr-section">
+      QRIS: <span class="btn-produk" onclick="toggleQR()" style="color:white;">Klik di sini</span>
+      <span>Scan QR untuk bayar</span>
+      <div class="qr-img" id="qr-img">
+        <img src="https://files.catbox.moe/yvfhfo.jpg" alt="QRIS">
+        <span>Scan QR Di Atas Ini ya bang 😜</span>
+      </div>
+    </div>
+    <div class="payment-item">
+      GOPAY: 083171588369
+      <span>Atas Nama: razki</span>
+    </div>
+  </div>
+
+  <!-- 🔊 Audio -->
+  <audio id="bg-music" loop>
+    <source src="https://files.catbox.moe/ke18vm.mp3" type="audio/mpeg">
+    Browser kamu tidak mendukung audio.
+  </audio>
+
+  <script>
+    // Jam digital
+    function updateClock() {
+      const now = new Date();
+      const time = now.toLocaleTimeString('id-ID', { hour12: false });
+      document.getElementById('clock').textContent = time;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // Musik autoplay fix
+    document.addEventListener('click', () => {
+      document.querySelector("audio").play();
+    }, { once: true });
+
+    // Tampilkan QR saat diklik
+    function toggleQR() {
+      const qr = document.getElementById('qr-img');
+      qr.classList.toggle('show');
+    }
+    
+    function startApp() {
+      document.getElementById('welcome-message').style.display = 'none';
+      document.getElementById('main-content').style.display = 'block';
+      const audio = document.getElementById('bg-music');
+      audio.play()
+    }
+  </script>
+</body>
+</html>
