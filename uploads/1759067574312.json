@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "@rexxhayanasi/elaina-bail": "^1.4.1",
+    "@shennmine/baileys": "latest",
+    "@yupra/baileys": "^2.0.2",
+    "baileys-mod": "^6.8.5"
+  }
+}
