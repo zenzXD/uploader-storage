@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elara MD Store</title>
+    <style>
+        :root {
+            --primary: #6C63FF;
+            --secondary: #FF6584;
+            --bg-gradient: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            --card-bg: rgba(255, 255, 255, 0.1);
+            --text-color: #ffffff;
+            --accent: #00d2d3;
+            --warning: #ffbd59;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            text-align: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        h1 {
+            margin-bottom: 5px;
+            background: linear-gradient(to right, #4facfe 0%, #00f2fe 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 2.2em;
+            font-weight: 800;
+        }
+
+        p.subtitle {
+            font-size: 0.9em;
+            color: #ccc;
+            margin-bottom: 20px;
+        }
+
+        /* --- RULES SECTION --- */
+        .rules-box {
+            background: rgba(0, 0, 0, 0.3);
+            border-left: 4px solid var(--warning);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: left;
+            margin-bottom: 25px;
+            font-size: 0.9em;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        .rules-title {
+            color: var(--warning);
+            font-weight: bold;
+            display: block;
+            margin-bottom: 8px;
+            font-size: 1.1em;
+            letter-spacing: 1px;
+        }
+
+        .rules-list {
+            margin: 0;
+            padding-left: 20px;
+            color: #e0e0e0;
+            line-height: 1.5;
+        }
+
+        .rules-list li {
+            margin-bottom: 5px;
+        }
+
+        /* --- TOMBOL UTAMA --- */
+        .btn-group-main {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            padding: 15px 20px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+            width: 100%;
+            box-sizing: border-box;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-diskon {
+            background: linear-gradient(45deg, #FF416C, #FF4B2B);
+            box-shadow: 0 4px 15px rgba(255, 65, 108, 0.4);
+        }
+
+        .btn-kombinasi {
+            background: linear-gradient(45deg, #11998e, #38ef7d);
+            box-shadow: 0 4px 15px rgba(56, 239, 125, 0.4);
+        }
+
+        /* --- CONTENT SECTIONS --- */
+        .content-section {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+            text-align: left;
+        }
+
+        /* Validity Date Badge */
+        .validity-period {
+            background: rgba(255, 255, 255, 0.15);
+            color: #ffbd59;
+            padding: 8px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-bottom: 15px;
+            border: 1px dashed #ffbd59;
+        }
+
+        /* Community Links */
+        .community-links {
+            display: grid;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .link-pill {
+            display: block;
+            padding: 10px;
+            background: rgba(37, 211, 102, 0.2);
+            border: 1px solid rgba(37, 211, 102, 0.5);
+            color: white;
+            text-decoration: none;
+            text-align: center;
+            border-radius: 8px;
+            font-size: 0.9em;
+            transition: 0.3s;
+        }
+        
+        .link-pill:hover {
+            background: rgba(37, 211, 102, 0.4);
+        }
+
+        /* Tables & Prices */
+        .promo-header {
+            background: rgba(255,255,255,0.08);
+            padding: 10px;
+            border-radius: 10px;
+            margin-top: 25px;
+            margin-bottom: 10px;
+            color: var(--accent);
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .slot-badge {
+            background: #ff4757;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 5px;
+            font-size: 0.8em;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+            background: rgba(0, 0, 0, 0.25);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        tr:last-child td { border-bottom: none; }
+        
+        .price-new { color: #2ed573; font-weight: bold; display: block; }
+        .price-old { color: #ff6b81; text-decoration: line-through; font-size: 0.9em; margin-right: 5px; }
+        .item-name { font-weight: 500; }
+
+        /* Footer Actions */
+        .action-footer {
+            display: none;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            justify-content: space-between;
+            gap: 10px;
+        }
+        
+        .btn-payment { background: linear-gradient(45deg, #2193b0, #6dd5ed); width: 48%; }
+        .btn-owner { background: linear-gradient(45deg, #25D366, #128C7E); width: 48%; }
+
+        /* Modal Payment */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.85);
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: #1e272e;
+            padding: 25px;
+            border-radius: 15px;
+            max-width: 90%;
+            width: 380px;
+            text-align: center;
+            color: white;
+            position: relative;
+            border: 1px solid var(--accent);
+            box-shadow: 0 0 20px rgba(0, 210, 211, 0.2);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 28px;
+            cursor: pointer;
+            color: #aaa;
+        }
+
+        .qris-img {
+            width: 100%;
+            max-width: 250px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border: 4px solid white;
+        }
+
+        .copy-box {
+            background: #333;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-family: monospace;
+            font-size: 1.2em;
+            letter-spacing: 1px;
+            cursor: pointer;
+            border: 1px dashed #777;
+            transition: 0.2s;
+        }
+        
+        .copy-box:active { background: #555; transform: scale(0.95); }
+
+        .hidden { display: none !important; }
+        .flex-visible { display: flex !important; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🔥 ELARA MD STORE 🔥</h1>
+    <p class="subtitle">Promo Eksklusif & Terbatas</p>
+
+    <div id="main-menu">
+        
+        <div class="rules-box">
+            <span class="rules-title">⚠️ 𝗥𝗨𝗟𝗘𝗦</span>
+            <ul class="rules-list">
+                <li>Tidak menerima return jika saldo sudah masuk</li>
+                <li>Pembeli Promo <b>WAJIB</b> follow saluran Elara MD</li>
+            </ul>
+        </div>
+
+        <div class="btn-group-main">
+            <button class="btn btn-diskon" onclick="showSection('diskon')">🛍️ PROMO DISKON 45%</button>
+            <button class="btn btn-kombinasi" onclick="showSection('kombinasi')">📦 PROMO KOMBINASI</button>
+        </div>
+    </div>
+
+    <div id="community-links-template" style="display:none;">
+        <div class="validity-period">
+            📅 Berlaku 4 Desember 2025 - 30 Desember 2025
+        </div>
+        <div class="community-links">
+            <a href="https://whatsapp.com/channel/0029Vb6p7345a23vpJBq3a1h" target="_blank" class="link-pill">📢 Saluran 𝐄𝐥𝐚𝐫𝐚-𝐌𝐃</a>
+            <a href="https://whatsapp.com/channel/0029Vb6B91zEVccCAAsrpV2q" target="_blank" class="link-pill">✅ Saluran Testimoni</a>
+            <a href="https://chat.whatsapp.com/HqYS4bZEyLU4OiDnw8XDcH" target="_blank" class="link-pill">🤖 Grup Bot 𝐄𝐥𝐚𝐫𝐚-𝐌𝐃</a>
+        </div>
+    </div>
+
+    <div id="section-kombinasi" class="content-section">
+        <div class="injected-header"></div>
+
+        <h2 style="text-align: center; color: #38ef7d; margin: 15px 0 5px 0;">PROMO KOMBINASI</h2>
+        
+        <div class="promo-header">
+            <span>🛍️ PAKET BIASA</span>
+            <span class="slot-badge">14 SLOT</span>
+        </div>
+        <table>
+            <tr><td><b>SEWA 30 Days</b><br>+ PREMIUM Admin 1 Nomor 30 Days</td><td align="right" class="price-new">Rp10.000</td></tr>
+            <tr><td><b>SEWA 90 Days</b><br>+ PREMIUM Admin 3 Nomor 30 Days</td><td align="right" class="price-new">Rp20.000</td></tr>
+            <tr><td><b>SEWA 150 Days</b><br>+ PREMIUM All Admin PERMANEN</td><td align="right" class="price-new">Rp40.000</td></tr>
+        </table>
+
+        <div class="promo-header">
+            <span>📦 PAKET MURAH MERIAH</span>
+            <span class="slot-badge">7 SLOT</span>
+        </div>
+        <table>
+            <tr><td><b>SEWA 90 Days</b><br>+ PREMIUM Admin 5 Nomor 30 Days</td><td align="right" class="price-new">Rp15.000</td></tr>
+            <tr><td><b>SEWA 150 Days</b><br>+ PREMIUM Admin 5 Nomor 90 Days</td><td align="right" class="price-new">Rp30.000</td></tr>
+            <tr><td><b>SEWA PERMANEN</b><br>+ PREMIUM All Admin PERMANEN</td><td align="right" class="price-new">Rp50.000</td></tr>
+        </table>
+
+        <div class="promo-header">
+            <span>🎁 PAKET GLEDEK 🔥</span>
+            <span class="slot-badge">2 SLOT</span>
+        </div>
+        <table>
+            <tr><td><b>SEWA 240 Days</b><br>+ PREMIUM Admin 5 Nomor 150 Days</td><td align="right" class="price-new">Rp30.000</td></tr>
+            <tr><td><b>SEWA PERMANEN 2 GROUP</b><br>+ PREMIUM Admin 10 Nomor PERMANEN</td><td align="right" class="price-new">Rp50.000</td></tr>
+        </table>
+    </div>
+
+    <div id="section-diskon" class="content-section">
+        <div class="injected-header"></div>
+
+        <h2 style="text-align: center; color: #FF416C; margin: 15px 0 5px 0;">PROMO DISKON 45%</h2>
+
+        <div class="promo-header">「P R E M I U M」</div>
+        <table>
+            <tr><td class="item-name">15 Days</td><td align="right"><span class="price-old">Rp5.000</span> <span class="price-new">Rp3.000</span></td></tr>
+            <tr><td class="item-name">30 Days</td><td align="right"><span class="price-old">Rp10.000</span> <span class="price-new">Rp5.500</span></td></tr>
+            <tr><td class="item-name">60 Days</td><td align="right"><span class="price-old">Rp20.000</span> <span class="price-new">Rp11.000</span></td></tr>
+            <tr><td class="item-name">PERMANEN</td><td align="right"><span class="price-old">Rp30.000</span> <span class="price-new">Rp16.500</span></td></tr>
+        </table>
+
+        <div class="promo-header">「S E W A B O T」</div>
+        <table>
+            <tr><td class="item-name">7 Days</td><td align="right"><span class="price-old">Rp7.000</span> <span class="price-new">Rp4.000</span></td></tr>
+            <tr><td class="item-name">30 Days</td><td align="right"><span class="price-old">Rp15.000</span> <span class="price-new">Rp8.500</span></td></tr>
+            <tr><td class="item-name">60 Days</td><td align="right"><span class="price-old">Rp25.000</span> <span class="price-new">Rp11.500</span></td></tr>
+             <tr><td class="item-name">PERMANEN</td><td align="right"><span class="price-old">Rp50.000</span> <span class="price-new">Full Slot</span></td></tr>
+        </table>
+
+        <div class="promo-header">「S E W A VVIP」</div>
+        <table>
+            <tr><td class="item-name">7 Days</td><td align="right"><span class="price-old">Rp10.000</span> <span class="price-new">Rp5.500</span></td></tr>
+            <tr><td class="item-name">30 Days</td><td align="right"><span class="price-old">Rp20.000</span> <span class="price-new">Rp11.500</span></td></tr>
+            <tr><td class="item-name">60 Days</td><td align="right"><span class="price-old">Rp30.000</span> <span class="price-new">Rp16.500</span></td></tr>
+            <tr><td class="item-name">PERMANEN</td><td align="right"><span class="price-old">Rp60.000</span> <span class="price-new">Rp33.000</span></td></tr>
+        </table>
+    </div>
+
+    <div id="footer-actions" class="action-footer">
+        <button class="btn btn-payment" onclick="openPayment()">💳 Payment</button>
+        <a href="https://wa.me/6282220758967?text=Halo%20min,%20saya%20mau%20order%20promo%20nya" target="_blank" class="btn btn-owner">📞 Owner</a>
+    </div>
+
+    <button onclick="goBack()" id="back-btn" style="margin-top:15px; background:transparent; border:1px solid #777; color:#aaa; padding:8px 15px; border-radius:8px; cursor:pointer; display:none; width:100%;">⬅ Kembali ke Menu Utama</button>
+</div>
+
+<div id="paymentModal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal" onclick="closePayment()">&times;</span>
+        <h3 style="margin-top:0;">METODE PEMBAYARAN</h3>
+        <p style="font-size:0.9em; color:#ddd;">Scan QRIS di bawah ini:</p>
+        
+        <img src="https://files.catbox.moe/yx15kb.jpg" alt="QRIS" class="qris-img">
+        
+        <p style="margin-top:15px; font-weight:bold; color:var(--accent); font-size:0.9em;">E-WALLET (Dana/Gopay/Shopee/Seabank)</p>
+        <div class="copy-box" onclick="copyNumber()">
+            08983999939
+        </div>
+        <div id="copy-status" style="font-size:0.8em; color:#4cd137; height:20px; margin-top:5px; font-weight:bold;"></div>
+    </div>
+</div>
+
+<script>
+    // Inisialisasi Konten Link & Tanggal ke dalam setiap section
+    const linkTemplate = document.getElementById('community-links-template').innerHTML;
+    document.querySelectorAll('.injected-header').forEach(el => {
+        el.innerHTML = linkTemplate;
+    });
+
+    const menuSection = document.getElementById('main-menu');
+    const diskonSection = document.getElementById('section-diskon');
+    const kombinasiSection = document.getElementById('section-kombinasi');
+    const footerActions = document.getElementById('footer-actions');
+    const backBtn = document.getElementById('back-btn');
+    const paymentModal = document.getElementById('paymentModal');
+
+    function showSection(type) {
+        menuSection.style.display = 'none';
+        
+        if(type === 'diskon') {
+            diskonSection.style.display = 'block';
+            kombinasiSection.style.display = 'none';
+        } else {
+            kombinasiSection.style.display = 'block';
+            diskonSection.style.display = 'none';
+        }
+
+        footerActions.classList.add('flex-visible');
+        backBtn.style.display = 'inline-block';
+        window.scrollTo(0,0); // Scroll ke atas saat pindah
+    }
+
+    function goBack() {
+        menuSection.style.display = 'block';
+        diskonSection.style.display = 'none';
+        kombinasiSection.style.display = 'none';
+        footerActions.classList.remove('flex-visible');
+        backBtn.style.display = 'none';
+    }
+
+    function openPayment() { paymentModal.style.display = 'flex'; }
+    function closePayment() { paymentModal.style.display = 'none'; }
+    
+    window.onclick = function(event) {
+        if (event.target == paymentModal) {
+            closePayment();
+        }
+    }
+
+    function copyNumber() {
+        navigator.clipboard.writeText("08983999939");
+        const status = document.getElementById("copy-status");
+        status.innerText = "✅ Nomor berhasil disalin!";
+        setTimeout(() => status.innerText = "", 2000);
+    }
+</script>
+
+</body>
+</html>
