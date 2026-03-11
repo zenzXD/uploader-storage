@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Web Lu Ampas</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --red: #ff0033;
+    --red-dim: #990020;
+    --bg: #000000;
+    --grid: #0a0a0a;
+    --text: #cccccc;
+    --mono: 'Share Tech Mono', monospace;
+    --title: 'Orbitron', sans-serif;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--mono);
+    min-height: 100vh;
+    overflow-x: hidden;
+    cursor: crosshair;
+  }
+
+  canvas#matrix {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    opacity: 0.07;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .scanline {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: repeating-linear-gradient(
+      to bottom,
+      transparent 0px,
+      transparent 2px,
+      rgba(0,0,0,0.15) 2px,
+      rgba(0,0,0,0.15) 4px
+    );
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .vignette {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.85) 100%);
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .container {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 40px 20px;
+  }
+
+  .skull {
+    font-size: clamp(60px, 12vw, 120px);
+    animation: pulse 2s ease-in-out infinite;
+    filter: drop-shadow(0 0 20px var(--red));
+    margin-bottom: 10px;
+    user-select: none;
+  }
+
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); filter: drop-shadow(0 0 20px var(--red)); }
+    50% { transform: scale(1.05); filter: drop-shadow(0 0 40px var(--red)) drop-shadow(0 0 80px var(--red-dim)); }
+  }
+
+  .title {
+    font-family: var(--title);
+    font-size: clamp(28px, 7vw, 72px);
+    font-weight: 900;
+    color: var(--red);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    text-align: center;
+    line-height: 1.1;
+    animation: glitch 3s infinite;
+    margin-bottom: 8px;
+  }
+
+  @keyframes glitch {
+    0%, 92%, 100% { 
+      text-shadow: 0 0 10px var(--red), 0 0 30px var(--red-dim);
+      transform: translate(0);
+      clip-path: none;
+    }
+    93% { 
+      transform: translate(-3px, 1px); 
+      text-shadow: 3px 0 var(--red), -3px 0 #00ffff;
+    }
+    94% { 
+      transform: translate(3px, -1px); 
+      text-shadow: -3px 0 var(--red), 3px 0 #00ffff;
+    }
+    95% { transform: translate(0); }
+    96% { transform: translate(-2px, 2px); clip-path: inset(10% 0 60% 0); }
+    97% { transform: translate(2px, -2px); clip-path: inset(60% 0 10% 0); }
+    98% { transform: translate(0); clip-path: none; }
+  }
+
+  .subtitle {
+    font-family: var(--title);
+    font-size: clamp(12px, 2.5vw, 18px);
+    color: #555;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    margin-bottom: 40px;
+  }
+
+  .divider {
+    width: min(500px, 90vw);
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--red), transparent);
+    margin: 20px 0;
+    position: relative;
+  }
+
+  .divider::before, .divider::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    width: 5px; height: 5px;
+    background: var(--red);
+    border-radius: 50%;
+  }
+  .divider::before { left: 50%; transform: translateX(-50%); }
+
+  .terminal {
+    width: min(600px, 92vw);
+    background: rgba(10, 0, 0, 0.85);
+    border: 1px solid #2a0008;
+    border-top: 2px solid var(--red);
+    padding: 20px 24px;
+    margin: 20px 0;
+    position: relative;
+    box-shadow: 0 0 30px rgba(255,0,51,0.1), inset 0 0 30px rgba(0,0,0,0.5);
+  }
+
+  .terminal-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #1a0005;
+  }
+
+  .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot.r { background: #ff3b30; }
+  .dot.y { background: #ffcc00; }
+  .dot.g { background: #28c840; }
+
+  .terminal-title-bar {
+    flex: 1;
+    text-align: center;
+    font-size: 11px;
+    color: #333;
+    letter-spacing: 0.1em;
+  }
+
+  .terminal-line {
+    font-size: clamp(11px, 2vw, 13px);
+    line-height: 2;
+    color: #888;
+  }
+
+  .terminal-line .prompt { color: var(--red); }
+  .terminal-line .cmd { color: #fff; }
+  .terminal-line .output { color: #444; padding-left: 16px; }
+  .terminal-line .success { color: #00ff88; padding-left: 16px; }
+  .terminal-line .warn { color: #ffcc00; padding-left: 16px; }
+
+  .cursor {
+    display: inline-block;
+    width: 8px; height: 14px;
+    background: var(--red);
+    animation: blink 1s step-end infinite;
+    vertical-align: middle;
+    margin-left: 2px;
+  }
+
+  @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+  .info-grid {
+    width: min(600px, 92vw);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 20px 0;
+  }
+
+  .info-card {
+    background: rgba(255,0,51,0.03);
+    border: 1px solid #1a0005;
+    border-left: 2px solid var(--red-dim);
+    padding: 12px 16px;
+    font-size: clamp(10px, 1.8vw, 12px);
+  }
+
+  .info-card .label { color: #444; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 4px; }
+  .info-card .value { color: #ccc; }
+  .info-card .value.red { color: var(--red); }
+
+  .msg {
+    width: min(600px, 92vw);
+    text-align: center;
+    font-family: var(--title);
+    font-size: clamp(13px, 2.5vw, 16px);
+    color: #333;
+    letter-spacing: 0.15em;
+    margin: 20px 0;
+    line-height: 1.8;
+  }
+
+  .msg span { color: var(--red); }
+
+  .sig {
+    margin-top: 30px;
+    font-family: var(--title);
+    font-size: clamp(11px, 2vw, 14px);
+    color: #222;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    animation: fadein 2s ease forwards;
+    opacity: 0;
+    animation-delay: 1s;
+  }
+
+  .sig strong { color: #444; }
+
+  @keyframes fadein { to { opacity: 1; } }
+
+  .corner {
+    position: fixed;
+    font-size: 10px;
+    color: #111;
+    letter-spacing: 0.1em;
+    font-family: var(--mono);
+  }
+  .corner.tl { top: 16px; left: 16px; }
+  .corner.tr { top: 16px; right: 16px; }
+  .corner.bl { bottom: 16px; left: 16px; }
+  .corner.br { bottom: 16px; right: 16px; }
+
+  #clock { color: #222; }
+</style>
+</head>
+<body>
+
+<canvas id="matrix"></canvas>
+<div class="scanline"></div>
+<div class="vignette"></div>
+
+<div class="corner tl">SYS://INTRUSION_DETECTED</div>
+<div class="corner tr" id="clock">00:00:00</div>
+<div class="corner bl">STATUS: OWNED</div>
+<div class="corner br">v1.0.0</div>
+
+<div class="container">
+
+  <div class="skull">💀</div>
+
+  <div class="title">Web Lu Ampas</div>
+  <div class="subtitle">Security is an illusion</div>
+
+  <div class="divider"></div>
+
+  <div class="terminal">
+    <div class="terminal-bar">
+      <div class="dot r"></div>
+      <div class="dot y"></div>
+      <div class="dot g"></div>
+      <div class="terminal-title-bar">bash — root@unknown</div>
+    </div>
+    <div class="terminal-line"><span class="prompt">root@unknown:~# </span><span class="cmd">./exploit.sh --target $1</span></div>
+    <div class="terminal-line"><span class="output">[*] Scanning target...</span></div>
+    <div class="terminal-line"><span class="output">[*] Enumerating services...</span></div>
+    <div class="terminal-line"><span class="warn">[!] Vulnerability found: CVE-2024-XXXX</span></div>
+    <div class="terminal-line"><span class="output">[*] Uploading payload...</span></div>
+    <div class="terminal-line"><span class="success">[+] Access granted. Shell acquired.</span></div>
+    <div class="terminal-line"><span class="success">[+] Defaced successfully.</span></div>
+    <div class="terminal-line"><span class="prompt">root@unknown:~# </span><span class="cursor"></span></div>
+  </div>
+
+  <div class="info-grid">
+    <div class="info-card">
+      <div class="label">Hacked by</div>
+      <div class="value red" id="hacker-name">ANONYMOUS</div>
+    </div>
+    <div class="info-card">
+      <div class="label">Timestamp</div>
+      <div class="value" id="timestamp">--</div>
+    </div>
+    <div class="info-card">
+      <div class="label">Method</div>
+      <div class="value">RCE / SQLi</div>
+    </div>
+    <div class="info-card">
+      <div class="label">Status</div>
+      <div class="value red">PWNED ✓</div>
+    </div>
+  </div>
+
+  <div class="msg">
+    Web lu <span>lemah</span>, security lu <span>sampah</span>.<br>
+    Patch dulu baru ngomong aman.
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="sig">Greetz: <strong>all my homies</strong></div>
+
+</div>
+
+<script>
+  const canvas = document.getElementById('matrix');
+  const ctx = canvas.getContext('2d');
+
+  const resize = () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; };
+  resize();
+  window.addEventListener('resize', resize);
+
+  const chars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノ@#$%&*<>';
+  const fontSize = 13;
+  let cols = Math.floor(canvas.width / fontSize);
+  let drops = Array(cols).fill(1);
+
+  setInterval(() => {
+    ctx.fillStyle = 'rgba(0,0,0,0.05)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#ff0033';
+    ctx.font = fontSize + 'px monospace';
+    cols = Math.floor(canvas.width / fontSize);
+    if (drops.length < cols) drops = [...drops, ...Array(cols - drops.length).fill(1)];
+    for (let i = 0; i < cols; i++) {
+      const c = chars[Math.floor(Math.random() * chars.length)];
+      ctx.fillText(c, i * fontSize, drops[i] * fontSize);
+      if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+      drops[i]++;
+    }
+  }, 50);
+
+  const clock = document.getElementById('clock');
+  const ts = document.getElementById('timestamp');
+  const update = () => {
+    const now = new Date();
+    const t = now.toTimeString().split(' ')[0];
+    const d = now.toLocaleDateString('id-ID');
+    clock.textContent = t;
+    ts.textContent = d + ' ' + t;
+  };
+  update();
+  setInterval(update, 1000);
+</script>
+
+</body>
+</html>
