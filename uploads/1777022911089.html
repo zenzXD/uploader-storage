@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QRIS PREMIER - RADIT DVC ULTIMATE</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/easyqrcodejs@4.4.10/dist/easy.qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Fira+Code:wght@400;500&display=swap');
+
+        :root { --gold: #D4AF37; --bg-dark: #050505; }
+        body {
+            background-color: var(--bg-dark);
+            color: white;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-image: radial-gradient(circle at 50% -20%, #1e1b4b 0%, var(--bg-dark) 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .royal-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 35px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
+        .gold-text {
+            background: linear-gradient(to right, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA771C);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* --- STYLING TITLES BERWARNA --- */
+        .badge-html { color: #E34F26; border-color: #E34F26; background: rgba(227, 79, 38, 0.1); }
+        .badge-css { color: #1572B6; border-color: #1572B6; background: rgba(21, 114, 182, 0.1); }
+        .badge-js { color: #F7DF1E; border-color: #F7DF1E; background: rgba(247, 223, 30, 0.1); }
+        .badge-py { color: #3776AB; border-color: #3776AB; background: rgba(55, 118, 171, 0.1); }
+        .badge-node { color: #339933; border-color: #339933; background: rgba(51, 153, 51, 0.1); }
+        .badge-php { color: #777BB3; border-color: #777BB3; background: rgba(119, 123, 179, 0.1); }
+
+        .skill-badge {
+            font-family: 'Fira Code', monospace;
+            font-size: 10px;
+            padding: 5px 12px;
+            border-radius: 8px;
+            border: 1px solid;
+            font-weight: 700;
+        }
+
+        /* --- GITHUB GRAPH MODERN --- */
+        .contribution-grid { display: grid; grid-template-columns: repeat(14, 1fr); gap: 4px; }
+        .square { width: 100%; aspect-ratio: 1; border-radius: 3px; transition: 0.3s; }
+        .sq-0 { background: #161b22; } /* Abu-abu Kosong */
+        .sq-1 { background: #0e4429; } /* Hijau Sangat Muda */
+        .sq-2 { background: #006d32; } /* Hijau Muda */
+        .sq-3 { background: #26a641; } /* Hijau Terang */
+        .sq-4 { background: #39d353; } /* Hijau Paling Terang */
+        .square:hover { transform: scale(1.3); z-index: 10; box-shadow: 0 0 10px rgba(57, 211, 83, 0.5); }
+
+        /* --- UPLOAD PROFILE MODERN --- */
+        .profile-upload-area {
+            position: relative;
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            border: 2px dashed rgba(212, 175, 55, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            overflow: hidden;
+            transition: 0.4s;
+        }
+        .profile-upload-area:hover { border-color: var(--gold); background: rgba(212, 175, 55, 0.05); }
+        .profile-upload-area img { width: 100%; height: 100%; object-cover: cover; }
+        .upload-icon { color: var(--gold); font-size: 20px; animation: bounce 2s infinite; }
+
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+        
+        .scan-line {
+            position: absolute; width: 100%; height: 3px;
+            background: var(--gold); box-shadow: 0 0 15px var(--gold);
+            animation: scanAnim 2s linear infinite; top: 0;
+        }
+        @keyframes scanAnim { 0% { top: 0; } 100% { top: 100%; } }
+
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+    <nav class="p-6 flex justify-between items-center fixed w-full top-0 z-50 glass backdrop-blur-md border-b border-gold/10">
+        <div id="live-clock" class="gold-text font-bold text-xs italic tracking-widest">00:00:00</div>
+        <div id="nav-menu" class="hidden flex items-center gap-5">
+            <button onclick="showSection('settings-section')" class="text-gold text-lg hover:scale-110 transition"><i class="fas fa-user-secret"></i></button>
+            <button onclick="openVaultAuth()" class="text-[9px] border-2 border-gold/40 px-4 py-1.5 rounded-full gold-text font-black tracking-tighter hover:bg-gold/10 transition">ADMIN VAULT</button>
+            <button onclick="logout()" class="text-red-500 hover:rotate-90 transition duration-500"><i class="fas fa-power-off"></i></button>
+        </div>
+    </nav>
+
+    <div class="pt-28 pb-20 px-6 flex justify-center items-center">
+        <div class="w-full max-w-lg">
+            
+            <div class="text-center mb-10 animate__animated animate__fadeInDown">
+                <h1 class="text-4xl font-black tracking-[12px] gold-text uppercase mb-2" style="font-family: 'Cinzel', serif;">Radit DVC</h1>
+                <div class="flex justify-center gap-2 flex-wrap">
+                    <span class="text-[8px] font-bold badge-html border px-2 py-0.5 rounded-md">HTML</span>
+                    <span class="text-[8px] font-bold badge-css border px-2 py-0.5 rounded-md">CSS</span>
+                    <span class="text-[8px] font-bold badge-js border px-2 py-0.5 rounded-md">JS</span>
+                    <span class="text-[8px] font-bold badge-py border px-2 py-0.5 rounded-md">PYTHON</span>
+                </div>
+            </div>
+
+            <section id="settings-section" class="royal-card p-8 space-y-8 hidden animate__animated animate__fadeInUp">
+                <div class="flex justify-between items-center border-b border-gold/10 pb-4">
+                    <h2 class="gold-text font-black uppercase text-xs italic tracking-widest">&lt;Master_Architect/&gt;</h2>
+                    <button onclick="backToDashboard()" class="hover:rotate-90 transition"><i class="fas fa-times text-gold"></i></button>
+                </div>
+                
+                <div class="flex flex-col items-center text-center">
+                    <div class="relative mb-6">
+                        <img src="https://files.catbox.moe/ktr24l.png" class="w-28 h-28 rounded-3xl border-2 border-gold object-cover shadow-[0_0_25px_rgba(212,175,55,0.3)]">
+                        <div class="absolute -bottom-2 -right-2 bg-green-500 w-5 h-5 rounded-full border-4 border-black animate-pulse"></div>
+                    </div>
+                    
+                    <h3 class="text-2xl font-black gold-text tracking-tighter">RADIT-DVC</h3>
+                    <p class="text-[11px] italic mt-4 opacity-80 leading-relaxed px-2">
+                        "Expert Fullstack Developer crafting modern <span class="text-blue-400">AI Solutions</span> and <span class="text-purple-400">Cyber Architectures</span> with precision."
+                    </p>
+
+                    <div class="flex flex-wrap justify-center gap-3 my-8">
+                        <span class="skill-badge badge-html">HTML5</span>
+                        <span class="skill-badge badge-css">CSS3</span>
+                        <span class="skill-badge badge-js">JAVASCRIPT</span>
+                        <span class="skill-badge badge-py">PYTHON</span>
+                        <span class="skill-badge badge-node">NODE.JS</span>
+                        <span class="skill-badge badge-php">PHP</span>
+                    </div>
+
+                    <div class="bg-black/40 p-5 rounded-2xl w-full border border-gold/10">
+                        <div class="flex justify-between items-center mb-4">
+                            <p class="text-[10px] font-black text-gold uppercase italic">Coding Contributions</p>
+                            <span class="text-[8px] text-green-400 font-bold">1,240 Commits</span>
+                        </div>
+                        <div class="contribution-grid" id="github-graph"></div>
+                        <div class="flex justify-end mt-3 gap-1">
+                            <span class="text-[7px] opacity-40 uppercase mr-1">Less</span>
+                            <div class="w-2 h-2 sq-0 rounded-sm"></div>
+                            <div class="w-2 h-2 sq-1 rounded-sm"></div>
+                            <div class="w-2 h-2 sq-2 rounded-sm"></div>
+                            <div class="w-2 h-2 sq-3 rounded-sm"></div>
+                            <div class="w-2 h-2 sq-4 rounded-sm"></div>
+                            <span class="text-[7px] opacity-40 uppercase ml-1">More</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="signup-section" class="royal-card p-10 space-y-8 animate__animated animate__fadeIn">
+                <div class="text-center">
+                    <h2 class="gold-text font-black uppercase text-lg italic tracking-widest">Register Identity</h2>
+                </div>
+                
+                <div class="flex flex-col items-center">
+                    <div class="profile-upload-area" onclick="document.getElementById('reg-photo').click()">
+                        <div id="upload-placeholder" class="text-center">
+                            <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                            <p class="text-[8px] text-gold font-bold uppercase mt-2">Avatar</p>
+                        </div>
+                        <img id="pfp-preview" class="hidden">
+                    </div>
+                    <input type="file" id="reg-photo" class="hidden" accept="image/*" onchange="previewImage(this)">
+                </div>
+
+                <div class="space-y-4">
+                    <div class="relative">
+                        <i class="fas fa-user absolute left-4 top-4 text-gold/30 text-xs"></i>
+                        <input type="text" id="reg-name" placeholder="FULL NAME" class="w-full bg-black/40 border border-gold/10 p-4 pl-12 rounded-2xl text-xs font-bold outline-none focus:border-gold transition">
+                    </div>
+                    <div class="relative">
+                        <i class="fas fa-envelope absolute left-4 top-4 text-gold/30 text-xs"></i>
+                        <input type="email" id="reg-email" placeholder="EMAIL ADDRESS" class="w-full bg-black/40 border border-gold/10 p-4 pl-12 rounded-2xl text-xs font-bold outline-none focus:border-gold transition">
+                    </div>
+                    <div class="relative">
+                        <i class="fas fa-lock absolute left-4 top-4 text-gold/30 text-xs"></i>
+                        <input type="password" id="reg-pass" placeholder="SECRET PASSWORD" class="w-full bg-black/40 border border-gold/10 p-4 pl-12 rounded-2xl text-xs font-bold outline-none focus:border-gold transition">
+                    </div>
+                    
+                    <button onclick="handleRegister()" class="w-full gold-btn py-5 rounded-2xl uppercase text-[10px] font-black tracking-[4px] shadow-lg">Initialize Account</button>
+                    <p class="text-center text-[9px] opacity-40 uppercase tracking-widest">System Authorized? <span onclick="showSection('login-section')" class="text-gold cursor-pointer font-black underline">Login Here</span></p>
+                </div>
+            </section>
+
+            <section id="gen-section" class="royal-card p-8 space-y-6 hidden animate__animated animate__fadeIn">
+                <div class="flex items-center gap-5 p-5 bg-black/40 rounded-3xl border border-gold/10">
+                    <div class="relative">
+                        <img id="user-pfp" src="" class="w-14 h-14 rounded-2xl border border-gold object-cover">
+                        <div class="absolute -top-1 -right-1 bg-gold w-3 h-3 rounded-full flex items-center justify-center text-[6px] text-black"><i class="fas fa-check"></i></div>
+                    </div>
+                    <div>
+                        <p class="text-[8px] text-gold font-black uppercase italic">Master Session Active</p>
+                        <h2 id="user-display-name" class="text-lg font-black uppercase tracking-tighter">Radit DVC</h2>
+                    </div>
+                </div>
+
+                <div onclick="document.getElementById('qris-file').click()" class="border-2 border-dashed border-gold/20 rounded-3xl p-10 text-center cursor-pointer hover:bg-gold/5 transition-all group">
+                    <i class="fas fa-qrcode text-3xl text-gold/30 group-hover:text-gold transition mb-3"></i>
+                    <p class="text-[10px] text-gold/50 group-hover:text-gold font-black uppercase tracking-widest">Inject Master QRIS</p>
+                    <input type="file" id="qris-file" hidden accept="image/*">
+                </div>
+
+                <div class="space-y-3">
+                    <input type="number" id="nominal" placeholder="INPUT NOMINAL" class="w-full bg-black/60 border border-gold/10 p-4 rounded-2xl text-center font-black text-xl outline-none text-gold placeholder:text-gold/20">
+                    <div class="flex gap-3">
+                        <input type="number" id="fee-val" placeholder="FEE" class="w-2/3 bg-black/60 border border-gold/10 p-4 rounded-2xl text-center text-xs font-bold outline-none">
+                        <select id="fee-type" class="w-1/3 bg-black/60 border border-gold/10 p-4 rounded-2xl text-[10px] font-black outline-none text-gold uppercase">
+                            <option value="rp">Rp</option><option value="pc">%</option>
+                        </select>
+                    </div>
+                    <button onclick="alert('Module Injected')" class="w-full gold-btn py-5 rounded-2xl uppercase text-[10px] font-black tracking-[4px]">Generate QRIS PRO</button>
+                </div>
+            </section>
+
+            <section id="vault-auth" class="royal-card p-10 hidden text-center space-y-8 animate__animated animate__zoomIn">
+                <h2 class="gold-text font-black uppercase italic text-sm tracking-[6px]">Admin Security Gate</h2>
+                
+                <div class="relative w-[240px] h-[240px] mx-auto rounded-3xl border-2 border-gold/30 overflow-hidden bg-black shadow-2xl">
+                    <video id="webcam" autoplay muted class="w-full h-full object-cover"></video>
+                    <div id="laser" class="hidden scan-line"></div>
+                    <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20 pointer-events-none"></div>
+                </div>
+
+                <div class="space-y-4">
+                    <button onclick="startFaceScan()" id="btn-scan" class="w-full py-4 bg-gold/10 border border-gold/40 rounded-2xl text-gold text-[10px] font-black uppercase tracking-widest hover:bg-gold/20 transition">
+                        <i class="fas fa-fingerprint mr-2"></i> Start Biometric Scan
+                    </button>
+                    <div class="flex items-center gap-3">
+                        <div class="h-[1px] bg-white/5 flex-grow"></div>
+                        <span class="text-[8px] opacity-20 font-bold uppercase">Manual Override</span>
+                        <div class="h-[1px] bg-white/5 flex-grow"></div>
+                    </div>
+                    <input type="password" id="vault-pin" placeholder="ADMIN ACCESS PIN" class="w-full bg-black/40 border border-gold/10 p-4 rounded-2xl text-center text-xs font-black tracking-[10px] outline-none text-gold">
+                    <button onclick="verifyVaultPin()" class="w-full gold-btn py-4 rounded-2xl uppercase text-[10px] font-black tracking-widest">Verify Access</button>
+                </div>
+            </section>
+
+            <section id="vault-db" class="royal-card p-8 hidden animate__animated animate__fadeIn">
+                <div class="flex justify-between items-center mb-6 border-b border-gold/10 pb-4">
+                    <h2 class="gold-text font-black uppercase text-xs italic tracking-widest">User Master Database</h2>
+                    <button onclick="backToDashboard()"><i class="fas fa-times text-gold"></i></button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-[10px] text-left">
+                        <thead class="text-gold uppercase font-black border-b border-gold/10">
+                            <tr><th class="p-3">User</th><th class="p-3">Email</th><th class="p-3">Pass</th></tr>
+                        </thead>
+                        <tbody id="db-body" class="font-bold"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="login-section" class="royal-card p-10 space-y-6 hidden">
+                <h2 class="text-center gold-text font-black uppercase italic tracking-widest">System Login</h2>
+                <div class="space-y-4">
+                    <input type="email" id="log-email" placeholder="ADMIN EMAIL" class="w-full bg-black/40 border border-gold/10 p-4 rounded-2xl text-xs font-bold outline-none">
+                    <input type="password" id="log-pass" placeholder="PASSWORD" class="w-full bg-black/40 border border-gold/10 p-4 rounded-2xl text-xs font-bold outline-none">
+                    <button onclick="handleLogin()" class="w-full gold-btn py-4 rounded-2xl uppercase text-[10px] font-black tracking-widest">Verify Admin</button>
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+    <footer class="p-10 text-center glass border-t border-gold/10 backdrop-blur-md mt-auto">
+        <div class="flex justify-center gap-12 mb-8">
+            <a href="https://wa.me/6285123977719" class="text-gold text-2xl hover:scale-125 transition duration-300"><i class="fab fa-whatsapp"></i></a>
+            <a href="https://t.me/xeyonn" class="text-gold text-2xl hover:scale-125 transition duration-300"><i class="fab fa-telegram"></i></a>
+            <a href="https://linktr.ee/raxzydoo" class="text-gold text-2xl hover:scale-125 transition duration-300"><i class="fas fa-link"></i></a>
+        </div>
+        <div class="flex flex-col items-center gap-1">
+            <p class="text-[8px] tracking-[8px] uppercase font-black gold-text">Developed By Radit-DVC Pro</p>
+            <p class="text-[6px] tracking-[4px] uppercase opacity-30 font-bold">V.7.5.Ultimate Architecture</p>
+        </div>
+    </footer>
+
+    <script>
+        const ADMIN_PIN = "239771";
+        let currentUser = null;
+
+        // --- PREVIEW IMAGE ---
+        function previewImage(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('pfp-preview').src = e.target.result;
+                    document.getElementById('pfp-preview').classList.remove('hidden');
+                    document.getElementById('upload-placeholder').classList.add('hidden');
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+         // --- AUTH LOGIC ---
+        function handleRegister() {
+            const name = document.getElementById('reg-name').value;
+            const email = document.getElementById('reg-email').value;
+            const pass = document.getElementById('reg-pass').value;
+            const photo = document.getElementById('pfp-preview').src;
+
+            if(!name || !email || !pass) return alert("System requires full identity!");
+
+            let db = JSON.parse(localStorage.getItem('radit_users')) || [];
+            db.push({ name, email, pass, photo: photo || 'https://files.catbox.moe/ktr24l.png' });
+            localStorage.setItem('radit_users', JSON.stringify(db));
+            alert("Account Initialized Successfully!");
+            showSection('login-section');
+        }
+
+        function handleLogin() {
+            const email = document.getElementById('log-email').value;
+            const pass = document.getElementById('log-pass').value;
+            const db = JSON.parse(localStorage.getItem('radit_users')) || [];
+            
+            const user = db.find(u => u.email === email && u.pass === pass);
+            if(user) {
+                currentUser = user;
+                document.getElementById('nav-menu').classList.remove('hidden');
+                document.getElementById('user-display-name').innerText = user.name;
+                document.getElementById('user-pfp').src = user.photo;
+                showSection('gen-section');
+            } else { alert("Invalid Credentials!"); }
+        }
+
+        // --- VAULT ---
+        function openVaultAuth() {
+            showSection('vault-auth');
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(stream => { document.getElementById('webcam').srcObject = stream; })
+                .catch(err => { alert("Cam Blocked!"); });
+        }
+
+        function startFaceScan() {
+            const laser = document.getElementById('laser');
+            const btn = document.getElementById('btn-scan');
+            laser.classList.remove('hidden');
+            btn.innerText = "BIOMETRIC ANALYZING...";
+
+            setTimeout(() => {
+                if(confirm("SCAN MATCH: 99.8% Accuracy. Welcome Owner Radit DVC. Open Vault?")) {
+                    enterVault();
+                } else {
+                    laser.classList.add('hidden');
+                    btn.innerText = "Start Biometric Scan";
+                }
+            }, 3000);
+        }
+
+        function verifyVaultPin() {
+            if(document.getElementById('vault-pin').value === ADMIN_PIN) enterVault();
+            else alert("Admin Pin Refused!");
+        }
+
+        function enterVault() {
+            stopCamera();
+            showSection('vault-db');
+            const db = JSON.parse(localStorage.getItem('radit_users')) || [];
+            const body = document.getElementById('db-body');
+            body.innerHTML = db.reverse().map(u => `
+                <tr class="border-b border-white/5 hover:bg-gold/5 transition">
+                    <td class="p-3">${u.name}</td>
+                    <td class="p-3 opacity-40">${u.email}</td>
+                    <td class="p-3 text-gold italic uppercase">${u.pass}</td>
+                </tr>
+            `).join('');
+        }
+
+        function stopCamera() {
+            const v = document.getElementById('webcam');
+            if(v.srcObject) v.srcObject.getTracks().forEach(t => t.stop());
+        }
+
+        // --- UI ---
+        function showSection(id) {
+            document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
+            document.getElementById(id).classList.remove('hidden');
+        }
+
+        function backToDashboard() {
+            if(currentUser) { stopCamera(); showSection('gen-section'); }
+            else showSection('signup-section');
+        }
+
+        function logout() {
+            currentUser = null;
+            document.getElementById('nav-menu').classList.add('hidden');
+            showSection('signup-section');
+        }
+
+        setInterval(() => {
+            document.getElementById('live-clock').innerText = new Date().toLocaleTimeString('id-ID', { hour12: false });
+        }, 1000);
+
+        function generateGithubGraph() {
+            const g = document.getElementById('github-graph');
+            g.innerHTML = '';
+            for(let i=0; i<70; i++) {
+                const d = document.createElement('div');
+                const level = Math.floor(Math.random() * 5); // 0 sampai 4
+                d.className = `square sq-${level}`;
+                g.appendChild(d);
+            }
+        }
+        generateGithubGraph();
+    </script>
+</body>
+</html>
