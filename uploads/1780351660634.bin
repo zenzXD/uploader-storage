@@ -1,0 +1,115 @@
+import { watchFile, unwatchFile } from 'fs' 
+import chalk from 'chalk'
+import { fileURLToPath } from 'url'
+import fs from 'fs'
+import cheerio from 'cheerio'
+import fetch from 'node-fetch'
+import axios from 'axios'
+
+
+global.ubedkey =  'NOORIKO_USER_1772145839374_S2KL5VVAXLL'
+global.pw = 'korbanjanji'
+global.nomorbot = '8562028540609' // Ganti dengan nomor bot Anda
+global.devicename = 'UBEDUBED' // Nama custom untuk Pairing Code
+
+//*─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─*
+
+// Daftar Pemilik Bot
+global.owner = [
+  ['6281399172380', 'zahra', true],
+  ['8562028540609', 'zahra', true]
+]
+
+//*─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─*
+
+// Daftar Moderator dan Pengguna Premium
+global.mods = []
+global.prems = []
+   
+//*─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─*
+
+global.packname = ``
+global.author = 'araa Bot'
+// Pesan Tunggu (Wait Message)
+global.wait = '🐢 *Tunggu sebentar, aku lambat... ฅ^•ﻌ•^ฅ*' 
+// Nama Bot
+global.botname = '✯ Ai araa - MD ✰'
+global.namebot = 'araa bot - MD'
+botname = 'araa Bot'
+global.textbot = `Powered By Zahra`
+// Pesan Selesai (Done Message)
+global.listo = '*Ini dia ฅ^•ﻌ•^ฅ*'
+// Nama Channel
+global.namechannel = 'https://whatsapp.com/channel/0029VbBtXwvBKfhuOh3LqU0b'
+global.faa = 'https://api-faa.my.id'
+global.youtube = 'AIzaSyDIYncRwLjGqDjwWbsREwJ0BFXUfBeR6wE'
+global.reactch ='d89fe0b038eb551d729499c46ab0df587bdeed883c678769516c38b841ff2251'
+
+global.ch= '120363424147891620@newsletter'
+
+//*─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─*
+
+// Lokasi Gambar (katalog dan miniurl)
+global.catalogo = fs.readFileSync('./storage/img/catalogo.png')
+global.miniurl = fs.readFileSync('./storage/img/miniurl.jpg')
+global.foto = 'https://raw.githubusercontent.com/obet24077/dat1/main/uploads/4119a9-1761283158470.jpg'
+global.fotorpg = 'https://files.catbox.moe/osfpgo.jpg'
+
+
+
+//*─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─*
+
+// Tautan Grup dan Channel
+global.group = '-'
+global.group2 = '-'
+global.group3 = '-'
+global.canal = '-'
+global.btc = 'liana2407'
+global.botcahxkey = 'Liana2407'
+//*─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─*
+
+global.maelyn = {
+    domain: 'https://api.maelyn.sbs',
+    key: 'lianaaza'
+ }
+
+global.btc = {
+    domain: 'https://api.botcahx.eu.org',
+    key: 'Liana2407'
+    }
+
+global.ubedAPI = { 
+    domain: 'https://api.ubed.my.id',
+    key: 'alhamdulillah'
+ }
+
+global.GoogleApi = 'AIzaSyCM_jlBX7v_vuowWLBEypf5bn_BwWVLdmc'; // API Key Google Anda Link: https://developers.google.com/custom-search/v1/overview
+
+global.GoogleCx = 'd31a4791c1c264bfc'; // CX (Custom Search Engine ID) Anda Link Sama kayak global.GoogleApi
+
+// Objek Styling Pesan (Untuk OrderMessage/Thumbnail)
+global.estilo = { key: {  fromMe: false, participant: `0@s.whatsapp.net`, ...(false ? { remoteJid: "5219992095479-1625305606@g.us" } : {}) }, message: { orderMessage: { itemCount : -999999, status: 1, surface : 1, message: botname, orderTitle: 'Bang', thumbnail: catalogo, sellerJid: '0@s.whatsapp.net'}}}
+
+//*─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─*
+
+// Modul yang di-globalisasi
+global.cheerio = cheerio
+global.fs = fs
+global.fetch = fetch
+global.axios = axios
+
+//*─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─*
+
+global.multiplier = 69 
+// Peringatan Maksimum
+global.maxwarn = '2' // Peringatan maksimum
+
+//*─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─*
+
+// Mekanisme Watch/Unwatch File untuk Reload (Kode Verifikasi Tersembunyi)
+let file = fileURLToPath(import.meta.url)
+watchFile(file, () => {
+  unwatchFile(file)
+  console.log(chalk.redBright("Pembaruan 'config.js'"))
+  import(`${file}?update=${Date.now()}`)
+})
