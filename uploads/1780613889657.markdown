@@ -1,0 +1,64 @@
+# Asisten Suara AI Desktop (Linux Mint)
+
+Asisten suara Bahasa Indonesia. Mic selalu aktif → STT (Groq Whisper) → LLM (Groq Llama 3.3 70B versatile) → TTS (ElevenLabs, suara laki-laki). Bisa buka Firefox untuk cari info realtime, dan bisa "lihat" layar lewat screenshot.
+
+## 1. Install dependency sistem (sekali saja)
+
+```bash
+sudo apt update
+sudo apt install -y sox libsox-fmt-all xdotool wmctrl mpv firefox scrot nodejs npm
+```
+
+- `sox` — rekam mic
+- `xdotool` + `wmctrl` — kontrol Firefox (Ctrl+T tab baru, ketik URL)
+- `mpv` — putar audio TTS (fallback: `ffplay` dari `ffmpeg`)
+- `scrot` — screenshot (dipakai `screenshot-desktop`)
+
+## 2. Install package Node
+
+```bash
+cd desktop-assistant
+npm install
+```
+
+## 3. Jalankan
+
+```bash
+npm start
+```
+
+Tampilan terminal akan menunjukkan status real-time:
+- 🎤 **MENDENGARKAN** — siap dengar suara kamu
+- 🔴 **MEREKAM SUARA** — sedang ambil suara (otomatis berhenti saat kamu diam ~1.5 detik)
+- 🧠 **BERPIKIR** — proses STT + LLM
+- 🔊 **BERBICARA** — TTS jalan
+
+## Contoh percakapan
+
+- "Cuaca di Jakarta berapa derajat?"
+  → AI panggil `buka_pencarian("cuaca Jakarta hari ini")` → Firefox buka tab baru → AI panggil `lihat_layar` → baca hasilnya → ngomong jawabannya.
+- "Berita terbaru tentang AI" → buka tab baru, search, ringkas.
+
+## Catatan Voice ID
+
+`ELEVENLABS_VOICE_ID` default-nya **Liam** (laki-laki, English-trained). Karena pakai model `eleven_multilingual_v2`, suaranya tetap bisa baca Indonesia dengan oke. Kalau punya voice custom Indonesia di akun ElevenLabs, ganti `ELEVENLABS_VOICE_ID` di `.env`.
+
+## Keamanan
+
+File `.env` berisi API key — **jangan commit ke git** (sudah ada di `.gitignore`). API key yang kamu share di chat sebaiknya **di-rotate/ganti** karena sudah ter-expose.
+
+## Troubleshooting
+
+- **"Failed to open dsp device"** → mic tidak terdeteksi sox. Cek `arecord -l` dan set default ALSA.
+- **Firefox tab baru tidak terbuka otomatis** → pastikan `xdotool` & `wmctrl` ke-install dan kamu pakai X11 (bukan Wayland). Linux Mint default X11, jadi harusnya aman.
+- **TTS tidak bersuara** → install `mpv` atau `ffmpeg` (`sudo apt install mpv`).
+- **Screenshot kosong di Wayland** → pakai sesi X11 saat login.
+
+## Struktur
+
+- `index.js` — loop utama (mic → STT → agent → TTS)
+- `stt.js` — Groq Whisper transkripsi
+- `tts.js` — ElevenLabs TTS streaming
+- `agent.js` — LLM + tool calling (buka_pencarian, lihat_layar)
+- `browser.js` — kontrol Firefox via xdotool
+- `vision.js` — screenshot + Groq vision
